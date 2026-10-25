@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block titolo %}Accedi · Esercizi canzone{% endblock %}
+{% block contenuto %}
+<section class="scheda stretta">
+  <h1>Accedi</h1>
+  <form id="form-login" data-api="/api/auth/login" data-vai="/" novalidate>
+    <label>Email <input type="email" name="email" autocomplete="email" required></label>
+    <label>Password <input type="password" name="password" autocomplete="current-password" required></label>
+    <p class="errore" id="errore" hidden></p>
+    <button type="submit" class="bottone primario">Entra</button>
+  </form>
+  <p class="nota">Non hai un account? <a href="/registrati">Registrati</a></p>
+</section>
+{% endblock %}

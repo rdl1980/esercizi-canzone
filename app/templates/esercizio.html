@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block titolo %}{{ esercizio.titolo_mostrato }} · Esercizi canzone{% endblock %}
+{% block contenuto %}
+<section class="scheda" id="dettaglio" data-id="{{ esercizio.id }}">
+  <div class="intestazione">
+    <h1 id="titolo">{{ esercizio.titolo_mostrato }}</h1>
+    <span class="stato" id="stato" data-stato="{{ esercizio.stato }}">{{ esercizio.stato_etichetta }}</span>
+  </div>
+
+  <div id="avanzamento" class="avanzamento" {% if esercizio.stato in ("pronto", "errore") %}hidden{% endif %}>
+    <div class="barra-prog"><div class="barra-prog-interna" id="barra" style="width: {{ esercizio.progresso }}%"></div></div>
+    <p><span id="fase">{{ esercizio.fase or "In attesa" }}</span> · <span id="percento">{{ esercizio.progresso }}</span>%</p>
+    <p class="nota">Questa pagina si aggiorna da sola. Puoi anche chiuderla e tornare più tardi.</p>
+  </div>
+
+  <p class="errore" id="errore-generazione" {% if esercizio.stato != "errore" %}hidden{% endif %}>{{ esercizio.errore or "" }}</p>
+
+  <div id="pronto" {% if esercizio.stato != "pronto" %}hidden{% endif %}>
+    <div class="azioni">
+      <a class="bottone primario" id="link-pdf" href="/api/esercizi/{{ esercizio.id }}/pdf">⬇ Scarica il PDF</a>
+      <a class="bottone" id="link-apri" href="/api/esercizi/{{ esercizio.id }}/pdf/apri" target="_blank">Apri nel browser</a>
+    </div>
+    <p class="nota">Parole sostituite: <span id="parole">{{ esercizio.parole | join(", ") }}</span></p>
+    <div class="anteprima"><img id="anteprima" alt="Anteprima della prima pagina" src="{% if esercizio.stato == 'pronto' %}/api/esercizi/{{ esercizio.id }}/anteprima.png?t={{ esercizio.aggiornato_il }}{% endif %}"></div>
+  </div>
+
+  <dl class="dati">
+    <dt>Video</dt><dd><a id="dato-video" href="{{ esercizio.url }}" target="_blank" rel="noopener">{{ esercizio.titolo_video or esercizio.url }}</a></dd>
+    <dt>Modalità</dt><dd id="dato-modalita">{{ esercizio.modalita_etichetta }}</dd>
+    <dt>Parole richieste</dt><dd id="dato-n-parole">{{ esercizio.n_parole if esercizio.n_parole else "decidi tu" }}</dd>
+  </dl>
+</section>
+
+<section class="scheda">
+  <h2>Rigenera con altri parametri</h2>
+  {% if not chiave_ai %}<p class="avviso">⚠️ Manca la chiave API Anthropic{% if LOCALE %}: inseriscila in <a href="/impostazioni">Impostazioni</a>{% else %} sul server{% endif %}.</p>{% endif %}
+  <form id="form-rigenera" data-api="/api/esercizi/{{ esercizio.id }}/rigenera" novalidate>
+    <label>Link del video YouTube <input type="url" name="url" value="{{ esercizio.url }}" required></label>
+    <label>Testo della canzone <textarea name="testo" rows="10" required>{{ esercizio.testo }}</textarea></label>
+    <div class="due-colonne">
+      <label>Numero di parole (0 = decidi tu) <input type="number" name="n_parole" value="{{ esercizio.n_parole }}" min="0" max="{{ MAX_PAROLE }}" step="1"></label>
+      <label>Titolo (opzionale) <input type="text" name="titolo" maxlength="100" value="{{ esercizio.titolo or '' }}" placeholder="{{ esercizio.titolo_canzone or 'Se vuoto, usa il titolo della canzone' }}"></label>
+    </div>
+    <fieldset>
+      <legend>Quanto testo usare</legend>
+      {% for valore, etichetta in MODALITA.items() %}
+      <label class="radio"><input type="radio" name="modalita" value="{{ valore }}" {% if esercizio.modalita == valore %}checked{% endif %}> {{ etichetta }}</label>
+      {% endfor %}
+    </fieldset>
+    <p class="errore" id="errore" hidden></p>
+    <div class="azioni">
+      <button type="submit" class="bottone primario" id="btn-rigenera">Rigenera</button>
+      <button type="button" class="bottone pericolo" id="btn-elimina">Elimina esercizio</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
+{% block script %}<script>App.dettaglio({{ esercizio.id }}, {{ 'true' if esercizio.stato in ('coda', 'in_lavorazione') else 'false' }});</script>{% endblock %}

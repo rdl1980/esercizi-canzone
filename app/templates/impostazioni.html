@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titolo %}Impostazioni · Esercizi canzone{% endblock %}
+{% block contenuto %}
+<section class="scheda stretta" style="max-width: 560px">
+  <h1>Impostazioni</h1>
+  <form id="form-impostazioni" data-api="/api/impostazioni" novalidate>
+    <label>Chiave API Anthropic
+      <input type="password" name="chiave" autocomplete="off" placeholder="{% if chiave_fine %}salvata (termina con …{{ chiave_fine }}): lascia vuoto per non cambiarla{% else %}sk-ant-…{% endif %}">
+      <small>Si ottiene su <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>. Viene salvata solo su questo computer. Ogni esercizio costa pochi centesimi.</small>
+    </label>
+    <label>Modello Claude
+      <input type="text" name="modello" value="{{ modello }}">
+      <small>Predefinito: <code>{{ modello_predefinito }}</code>. Un modello più grande (es. <code>claude-opus-5-5</code>) sceglie meglio ma costa di più.</small>
+    </label>
+    <p class="errore" id="errore" hidden></p>
+    <p class="avviso" id="ok" hidden>Impostazioni salvate: la chiave funziona.</p>
+    <div class="azioni">
+      <button type="submit" class="bottone primario">Salva e prova la chiave</button>
+      <a class="bottone" href="/">Torna agli esercizi</a>
+    </div>
+  </form>
+  {% if cartella_pdf %}<p class="nota">I PDF generati vengono copiati anche in <code>{{ cartella_pdf }}</code>.</p>{% endif %}
+  <p class="nota">Versione {{ VERSIONE }}. L'app controlla gli aggiornamenti a ogni avvio.</p>
+</section>
+{% endblock %}
+{% block script %}<script>App.formImpostazioni(document.getElementById('form-impostazioni'));</script>{% endblock %}

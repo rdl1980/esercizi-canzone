@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titolo %}Nuovo esercizio · Esercizi canzone{% endblock %}
+{% block contenuto %}
+<section class="scheda">
+  <h1>Nuovo esercizio</h1>
+  {% if not chiave_ai %}
+    {% if LOCALE %}
+    <p class="avviso">⚠️ Manca la chiave API Anthropic: inseriscila nella pagina <a href="/impostazioni">Impostazioni</a> prima di generare.</p>
+    {% else %}
+    <p class="avviso">⚠️ Sul server manca la chiave API Anthropic (<code>ANTHROPIC_API_KEY</code> nel file <code>.env</code>): la generazione non partirà finché non viene configurata.</p>
+    {% endif %}
+  {% endif %}
+  <form id="form-esercizio" data-api="/api/esercizi" novalidate>
+    <label>Link del video YouTube <span class="obbl">*</span>
+      <input type="url" name="url" placeholder="https://www.youtube.com/watch?v=..." required>
+    </label>
+    <label>Testo completo della canzone <span class="obbl">*</span>
+      <textarea name="testo" rows="14" placeholder="Incolla qui il testo, una riga per verso. Lascia una riga vuota tra le strofe." required></textarea>
+      <small>Lascia una riga vuota tra una strofa e l'altra: serve a riconoscere il ritornello.</small>
+    </label>
+    <div class="due-colonne">
+      <label>Numero di parole da sostituire con immagini
+        <input type="number" name="n_parole" value="0" min="0" max="{{ MAX_PAROLE }}" step="1">
+        <small>0 = decidi tu (circa 5-6 per una strofa, 10-12 per il testo intero).</small>
+      </label>
+      <label>Titolo (opzionale)
+        <input type="text" name="titolo" maxlength="100" placeholder="Se vuoto, usa il titolo del video">
+      </label>
+    </div>
+    <fieldset>
+      <legend>Quanto testo usare</legend>
+      {% for valore, etichetta in MODALITA.items() %}
+      <label class="radio"><input type="radio" name="modalita" value="{{ valore }}" {% if loop.first %}checked{% endif %}> {{ etichetta }}</label>
+      {% endfor %}
+    </fieldset>
+    <p class="errore" id="errore" hidden></p>
+    <div class="azioni">
+      <button type="submit" class="bottone primario">Genera l'esercizio</button>
+      <a class="bottone" href="/">Annulla</a>
+    </div>
+    <p class="nota">La generazione dura circa 1-2 minuti: scarica il video, estrae i fotogrammi, sceglie le parole con l'AI e impagina il PDF.</p>
+  </form>
+</section>
+{% endblock %}
+{% block script %}<script>App.formEsercizio(document.getElementById('form-esercizio'));</script>{% endblock %}

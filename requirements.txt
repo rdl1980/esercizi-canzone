@@ -1,0 +1,12 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+jinja2>=3.1
+python-multipart>=0.0.9
+itsdangerous>=2.2
+bcrypt>=4.2
+python-dotenv>=1.0
+anthropic>=0.40
+pillow>=10.4
+reportlab>=4.2
+pymupdf>=1.24
+yt-dlp>=2025.1.1

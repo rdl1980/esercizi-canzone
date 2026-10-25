@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titolo %}I miei esercizi · Esercizi canzone{% endblock %}
+{% block contenuto %}
+<div class="intestazione">
+  <h1>I miei esercizi</h1>
+  <a class="bottone primario" href="/nuovo">+ Nuovo esercizio</a>
+</div>
+<p class="errore" id="errore" hidden></p>
+<div id="elenco" class="griglia"><p class="nota">Caricamento…</p></div>
+<template id="tpl-vuoto">
+  <div class="scheda vuota">
+    <p>Non hai ancora creato esercizi.</p>
+    <a class="bottone primario" href="/nuovo">Crea il primo esercizio</a>
+  </div>
+</template>
+{% endblock %}
+{% block script %}<script>App.elenco();</script>{% endblock %}

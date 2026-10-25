@@ -1,0 +1,15 @@
+services:
+  esercizi:
+    build: .
+    container_name: esercizi-canzone
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DATA_DIR: /app/data
+      # dentro il container non c'è node: il secondo tentativo di yt-dlp viene saltato
+      YTDLP_REMOTE_COMPONENTS: "false"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

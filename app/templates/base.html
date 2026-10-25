@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titolo %}Esercizi canzone{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="barra">
+  <a class="logo" href="/">🎵 Esercizi canzone</a>
+  <nav>
+    {% if LOCALE %}
+      <a href="/">I miei esercizi</a>
+      <a class="bottone" href="/nuovo">+ Nuovo esercizio</a>
+      <a href="/impostazioni">⚙ Impostazioni</a>
+    {% elif utente %}
+      <a href="/">I miei esercizi</a>
+      <a class="bottone" href="/nuovo">+ Nuovo esercizio</a>
+      <span class="utente">{{ utente.email }}</span>
+      <button type="button" class="link" id="btn-logout">Esci</button>
+    {% else %}
+      <a href="/login">Accedi</a>
+      <a class="bottone" href="/registrati">Registrati</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="contenuto">
+  {% block contenuto %}{% endblock %}
+</main>
+<footer class="pie">Completa la parola con l'immagine del video · generato con ffmpeg, yt-dlp e Claude · versione {{ VERSIONE }}</footer>
+<script src="/static/app.js"></script>
+{% block script %}{% endblock %}
+</body>
+</html>
